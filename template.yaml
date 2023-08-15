@@ -1,0 +1,416 @@
+Resources:
+  authCcstackdevCEE330CA:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      AttributeDefinitions:
+        - AttributeName: username
+          AttributeType: S
+      BillingMode: PAY_PER_REQUEST
+      KeySchema:
+        - AttributeName: username
+          KeyType: HASH
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      TableName: UserAuthentication-dev
+    UpdateReplacePolicy: Delete
+    DeletionPolicy: Delete
+    Metadata:
+      aws:cdk:path: authCc-stack-dev/authCc-stack-dev/Resource
+  RegisterLambdaFunctionServiceRole9CF1DBD3:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: authCc-stack-dev/RegisterLambdaFunction/ServiceRole/Resource
+  RegisterLambdaFunctionServiceRoleDefaultPolicy859FF6F4:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - dynamodb:BatchGetItem
+              - dynamodb:GetRecords
+              - dynamodb:GetShardIterator
+              - dynamodb:Query
+              - dynamodb:GetItem
+              - dynamodb:Scan
+              - dynamodb:ConditionCheckItem
+              - dynamodb:BatchWriteItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+              - dynamodb:DeleteItem
+              - dynamodb:DescribeTable
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - authCcstackdevCEE330CA
+                  - Arn
+              - Ref: AWS::NoValue
+        Version: "2012-10-17"
+      PolicyName: RegisterLambdaFunctionServiceRoleDefaultPolicy859FF6F4
+      Roles:
+        - Ref: RegisterLambdaFunctionServiceRole9CF1DBD3
+    Metadata:
+      aws:cdk:path: authCc-stack-dev/RegisterLambdaFunction/ServiceRole/DefaultPolicy/Resource
+  RegisterLambdaFunctionE073BE40:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: cdk-hnb659fds-assets-430222119527-eu-central-1
+        S3Key: 2c7e18a6aad03d3ec5721b622d0b999b570e19ddc8a46b12f1c76672ea4fd129.zip
+      Environment:
+        Variables:
+          LOG_LEVEL: DEBUG
+          STAGE: dev
+          REGION: eu-central-1
+          DYNAMODB_TABLE: UserAuthentication-dev
+          AVAILABILITY_ZONES: '["eu-central-1a","eu-central-1b","eu-central-1c"]'
+          AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1"
+      FunctionName: register-user-dev
+      Handler: index.handler
+      MemorySize: 1024
+      Role:
+        Fn::GetAtt:
+          - RegisterLambdaFunctionServiceRole9CF1DBD3
+          - Arn
+      Runtime: nodejs16.x
+      Timeout: 5
+    DependsOn:
+      - RegisterLambdaFunctionServiceRoleDefaultPolicy859FF6F4
+      - RegisterLambdaFunctionServiceRole9CF1DBD3
+    Metadata:
+      aws:cdk:path: authCc-stack-dev/RegisterLambdaFunction/Resource
+      aws:asset:path: /Users/ahmedzeno/personal/auth-cc/cdk.out/asset.2c7e18a6aad03d3ec5721b622d0b999b570e19ddc8a46b12f1c76672ea4fd129
+      aws:asset:is-bundled: true
+      aws:asset:property: Code
+  RegisterLambdaFunctionLogRetentionF7396E4B:
+    Type: Custom::LogRetention
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A
+          - Arn
+      LogGroupName:
+        Fn::Join:
+          - ""
+          - - /aws/lambda/
+            - Ref: RegisterLambdaFunctionE073BE40
+      RetentionInDays: 3
+    Metadata:
+      aws:cdk:path: authCc-stack-dev/RegisterLambdaFunction/LogRetention/Resource
+  LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: authCc-stack-dev/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole/Resource
+  LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - logs:PutRetentionPolicy
+              - logs:DeleteRetentionPolicy
+            Effect: Allow
+            Resource: "*"
+        Version: "2012-10-17"
+      PolicyName: LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB
+      Roles:
+        - Ref: LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB
+    Metadata:
+      aws:cdk:path: authCc-stack-dev/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/ServiceRole/DefaultPolicy/Resource
+  LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs18.x
+      Code:
+        S3Bucket: cdk-hnb659fds-assets-430222119527-eu-central-1
+        S3Key: 5cc92ed0cea39e2b8de2dbc527dfb5980a3af9564bd1084d840b9787c7d0467e.zip
+      Role:
+        Fn::GetAtt:
+          - LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB
+          - Arn
+    DependsOn:
+      - LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB
+      - LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB
+    Metadata:
+      aws:cdk:path: authCc-stack-dev/LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8a/Resource
+      aws:asset:path: /Users/ahmedzeno/personal/auth-cc/node_modules/aws-cdk-lib/aws-logs/lib/log-retention-provider
+      aws:asset:is-bundled: false
+      aws:asset:property: Code
+  AuthLambdaFunctionServiceRole53C2C292:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+      ManagedPolicyArns:
+        - Fn::Join:
+            - ""
+            - - "arn:"
+              - Ref: AWS::Partition
+              - :iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+    Metadata:
+      aws:cdk:path: authCc-stack-dev/AuthLambdaFunction/ServiceRole/Resource
+  AuthLambdaFunctionServiceRoleDefaultPolicy3540BCF7:
+    Type: AWS::IAM::Policy
+    Properties:
+      PolicyDocument:
+        Statement:
+          - Action:
+              - dynamodb:BatchGetItem
+              - dynamodb:GetRecords
+              - dynamodb:GetShardIterator
+              - dynamodb:Query
+              - dynamodb:GetItem
+              - dynamodb:Scan
+              - dynamodb:ConditionCheckItem
+              - dynamodb:DescribeTable
+            Effect: Allow
+            Resource:
+              - Fn::GetAtt:
+                  - authCcstackdevCEE330CA
+                  - Arn
+              - Ref: AWS::NoValue
+        Version: "2012-10-17"
+      PolicyName: AuthLambdaFunctionServiceRoleDefaultPolicy3540BCF7
+      Roles:
+        - Ref: AuthLambdaFunctionServiceRole53C2C292
+    Metadata:
+      aws:cdk:path: authCc-stack-dev/AuthLambdaFunction/ServiceRole/DefaultPolicy/Resource
+  AuthLambdaFunctionEB7081E8:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: cdk-hnb659fds-assets-430222119527-eu-central-1
+        S3Key: 90bc5695f405ed281cc4cd43d391c08a7dc20a83b9e5added68ae7059009d29b.zip
+      Environment:
+        Variables:
+          LOG_LEVEL: DEBUG
+          STAGE: dev
+          REGION: eu-central-1
+          DYNAMODB_TABLE: UserAuthentication-dev
+          AVAILABILITY_ZONES: '["eu-central-1a","eu-central-1b","eu-central-1c"]'
+          AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1"
+      FunctionName: auth-user-dev
+      Handler: index.handler
+      MemorySize: 1024
+      Role:
+        Fn::GetAtt:
+          - AuthLambdaFunctionServiceRole53C2C292
+          - Arn
+      Runtime: nodejs16.x
+      Timeout: 5
+    DependsOn:
+      - AuthLambdaFunctionServiceRoleDefaultPolicy3540BCF7
+      - AuthLambdaFunctionServiceRole53C2C292
+    Metadata:
+      aws:cdk:path: authCc-stack-dev/AuthLambdaFunction/Resource
+      aws:asset:path: /Users/ahmedzeno/personal/auth-cc/cdk.out/asset.90bc5695f405ed281cc4cd43d391c08a7dc20a83b9e5added68ae7059009d29b
+      aws:asset:is-bundled: true
+      aws:asset:property: Code
+  AuthLambdaFunctionLogRetentionDD16B14A:
+    Type: Custom::LogRetention
+    Properties:
+      ServiceToken:
+        Fn::GetAtt:
+          - LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A
+          - Arn
+      LogGroupName:
+        Fn::Join:
+          - ""
+          - - /aws/lambda/
+            - Ref: AuthLambdaFunctionEB7081E8
+      RetentionInDays: 3
+    Metadata:
+      aws:cdk:path: authCc-stack-dev/AuthLambdaFunction/LogRetention/Resource
+  authapidevB78B451F:
+    Type: AWS::ApiGatewayV2::Api
+    Properties:
+      CorsConfiguration:
+        AllowCredentials: true
+        AllowHeaders:
+          - Content-Type
+          - X-Amz-Date
+          - Authorization
+          - X-Api-Key
+        AllowMethods:
+          - OPTIONS
+          - GET
+          - POST
+          - PUT
+          - PATCH
+          - DELETE
+        AllowOrigins:
+          - http://localhost:3000
+      Description: HTTP API for user Authorization - dev
+      Name: auth-api-dev
+      ProtocolType: HTTP
+    Metadata:
+      aws:cdk:path: authCc-stack-dev/auth-api-dev/Resource
+  authapidevDefaultStageDE2DCF90:
+    Type: AWS::ApiGatewayV2::Stage
+    Properties:
+      ApiId:
+        Ref: authapidevB78B451F
+      AutoDeploy: true
+      StageName: $default
+    Metadata:
+      aws:cdk:path: authCc-stack-dev/auth-api-dev/DefaultStage/Resource
+  authapidevPOSTregisterregisterIntegrationC68A3216:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId:
+        Ref: authapidevB78B451F
+      IntegrationType: AWS_PROXY
+      IntegrationUri:
+        Fn::GetAtt:
+          - RegisterLambdaFunctionE073BE40
+          - Arn
+      PayloadFormatVersion: "2.0"
+    Metadata:
+      aws:cdk:path: authCc-stack-dev/auth-api-dev/POST--register/registerIntegration/Resource
+  authapidevPOSTregisterregisterIntegrationPermission2C99D256:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - RegisterLambdaFunctionE073BE40
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:"
+            - Ref: AWS::Partition
+            - ":execute-api:eu-central-1:430222119527:"
+            - Ref: authapidevB78B451F
+            - /*/*/register
+    Metadata:
+      aws:cdk:path: authCc-stack-dev/auth-api-dev/POST--register/registerIntegration-Permission
+  authapidevPOSTregister75C003E6:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId:
+        Ref: authapidevB78B451F
+      AuthorizationType: NONE
+      RouteKey: POST /register
+      Target:
+        Fn::Join:
+          - ""
+          - - integrations/
+            - Ref: authapidevPOSTregisterregisterIntegrationC68A3216
+    Metadata:
+      aws:cdk:path: authCc-stack-dev/auth-api-dev/POST--register/Resource
+  authapidevPOSTauthenticateauthenticateIntegration41697CD4:
+    Type: AWS::ApiGatewayV2::Integration
+    Properties:
+      ApiId:
+        Ref: authapidevB78B451F
+      IntegrationType: AWS_PROXY
+      IntegrationUri:
+        Fn::GetAtt:
+          - AuthLambdaFunctionEB7081E8
+          - Arn
+      PayloadFormatVersion: "2.0"
+    Metadata:
+      aws:cdk:path: authCc-stack-dev/auth-api-dev/POST--authenticate/authenticateIntegration/Resource
+  authapidevPOSTauthenticateauthenticateIntegrationPermission8A3119D8:
+    Type: AWS::Lambda::Permission
+    Properties:
+      Action: lambda:InvokeFunction
+      FunctionName:
+        Fn::GetAtt:
+          - AuthLambdaFunctionEB7081E8
+          - Arn
+      Principal: apigateway.amazonaws.com
+      SourceArn:
+        Fn::Join:
+          - ""
+          - - "arn:"
+            - Ref: AWS::Partition
+            - ":execute-api:eu-central-1:430222119527:"
+            - Ref: authapidevB78B451F
+            - /*/*/authenticate
+    Metadata:
+      aws:cdk:path: authCc-stack-dev/auth-api-dev/POST--authenticate/authenticateIntegration-Permission
+  authapidevPOSTauthenticateA0B0F963:
+    Type: AWS::ApiGatewayV2::Route
+    Properties:
+      ApiId:
+        Ref: authapidevB78B451F
+      AuthorizationType: NONE
+      RouteKey: POST /authenticate
+      Target:
+        Fn::Join:
+          - ""
+          - - integrations/
+            - Ref: authapidevPOSTauthenticateauthenticateIntegration41697CD4
+    Metadata:
+      aws:cdk:path: authCc-stack-dev/auth-api-dev/POST--authenticate/Resource
+  CDKMetadata:
+    Type: AWS::CDK::Metadata
+    Properties:
+      Analytics: v2:deflate64:H4sIAAAAAAAA/01QXU/DMAz8LXtPvXYIpL2xISGQEKDC++S2JqQfSVUnm6qq/50k7dCe7uzc2RfvYNpnkG7wwklZNUmrCpi+LJaN8K3TVI0aO1P55jcWLYmnHx3JLFrsigpP2lRUM7xHeHa6tMpoobCDKTeLIeKnaVU5hnJhs+C7EzKTZTgE8DUcXdmQPSLTOh4mb/ifGsw0dIrZVz6BkQxvRuZkSUcB9kqipQuO5120HnoVXP5DMkZ51ZbkgNdpuXGW5lnkxMYNJYmYJKiVllFwffD8w9ne2Vncp5Am2Pa/6O/2uB5uG/B2/aqYXqztQ4qAS4zA4uLIbhL5IOGaUPP2nD1AtodsU7NSyeD89zqCfME/5fOx97QBAAA=
+    Metadata:
+      aws:cdk:path: authCc-stack-dev/CDKMetadata/Default
+Outputs:
+  apiUrl:
+    Value:
+      Fn::Join:
+        - ""
+        - - https://
+          - Ref: authapidevB78B451F
+          - .execute-api.eu-central-1.
+          - Ref: AWS::URLSuffix
+          - /
+Parameters:
+  BootstrapVersion:
+    Type: AWS::SSM::Parameter::Value<String>
+    Default: /cdk-bootstrap/hnb659fds/version
+    Description: Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]
+Rules:
+  CheckBootstrapVersion:
+    Assertions:
+      - Assert:
+          Fn::Not:
+            - Fn::Contains:
+                - - "1"
+                  - "2"
+                  - "3"
+                  - "4"
+                  - "5"
+                - Ref: BootstrapVersion
+        AssertDescription: CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.
+
