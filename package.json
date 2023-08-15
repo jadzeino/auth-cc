@@ -1,0 +1,60 @@
+{
+  "name": "auth-cc",
+  "version": "0.1.0",
+  "bin": {
+    "auth-cc": "bin/auth-cc.js"
+  },
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "dynamodb:start": "docker run -d --name dynamodb-local-test -p 8000:8000 amazon/dynamodb-local",
+    "create-table": "./scripts/createLocalDynamoTable.sh",
+    "test:integration": "TEST_ENV=local jest tests/integration",
+    "dynamodb:stop": "docker stop dynamodb-local-test && docker rm dynamodb-local-test",
+    "posttest:integration": "npm run dynamodb:stop",
+    "test": "jest",
+    "cdk": "cdk",
+    "type-check": "tsc --project tsconfig.json --pretty --noEmit",
+    "lint": "eslint . --ext js,jsx,ts,tsx --fix"
+  },
+  "dependencies": {
+    "@aws-cdk/aws-apigatewayv2-alpha": "^2.50.0-alpha.0",
+    "@aws-cdk/aws-apigatewayv2-integrations-alpha": "^2.50.0-alpha.0",
+    "@aws-sdk/client-dynamodb": "^3.388.0",
+    "@aws-sdk/lib-dynamodb": "^3.388.0",
+    "@aws-sdk/util-dynamodb": "^3.388.0",
+    "@types/bcryptjs": "^2.4.2",
+    "@types/joi": "^17.2.3",
+    "aws-cdk-lib": "^2.50.0",
+    "bcryptjs": "^2.4.3",
+    "constructs": "^10.1.147",
+    "joi": "^17.9.2",
+    "lambda-local": "^2.1.1",
+    "mock-aws-s3": "^4.0.2",
+    "nock": "^13.3.2",
+    "source-map-support": "^0.5.21"
+  },
+  "devDependencies": {
+    "@aws-cdk/assertions": "^1.204.0",
+    "@types/aws-lambda": "^8.10.108",
+    "@types/jest": "^27.4.1",
+    "@types/node": "^17.0.23",
+    "@typescript-eslint/eslint-plugin": "^5.19.0",
+    "@typescript-eslint/parser": "^5.19.0",
+    "aws-cdk": "^2.50.0",
+    "aws-lambda": "^1.0.7",
+    "esbuild": "^0.15.12",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-import-resolver-typescript": "^2.7.1",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jest": "^26.1.4",
+    "eslint-plugin-prettier": "^4.0.0",
+    "jest": "^27.5.1",
+    "jest-mock-extended": "^3.0.5",
+    "prettier": "^2.6.2",
+    "ts-jest": "^27.1.4",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.3"
+  }
+}
